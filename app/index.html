@@ -28,19 +28,33 @@
         <!--////////////////////////////////////////////////////////
         /////////////////////////////////////// BEGIN USER HTML HERE
         /////////////////////////////////////////////////////////-->
-        <div class="header">
-            <input id="uploadFile" placeholder="Choose File" disabled="disabled" />
+        <div class="container">
+            <div class="header">Image Gallery</div>
 
-            <div class="file-upload button">
-                <span>Upload</span>
-                <input id="uploadBtn" type="file" class="upload" />
-            </div>
+            <div class="image-form"></div>
+
+            <div class="image-gallery"></div>
         </div>
 
-        <div class="photo-container"></div>
+        <script type="text/template" class="thumbnail-template">
+            <img src="<%= image._url %>" class="image-thumbnail">
+        </script>
 
-        <script type="text/template" class="photo-template">
-            <div class="photo" style="background: url(<%= image-path %>); ">
+        <script type="text/template" class="detail-template">
+            <img src="<%= image._url %>" class="image-detail form-image">
+
+            <input type="file" class="image-file-selector">
+            <input type="text" class="image-file-name" placeholder="Image Name..." value="<%= isPlaceholder ? '' : image._url %>"></div>
+            <div class="image-file-selector-button button">Select File</div>
+            <input type="text" class="form-comment" placeholder="Image Comment..." value="<%= isPlaceholder ? '' : comment %>"></input>
+
+            <% if (isPlaceholder) { %>
+                <div class="upload-button button">Upload</div>
+                <div class="preview-button button">Preview</div>
+            <% } else { %>
+                <div class="update-button button">Update</div>
+                <div class="delete-button button">Delete</div>
+            <% } %>
         </script>
 
         <!--////////////////////////////////////////////////////////
@@ -66,6 +80,9 @@
         </script>
 
         <!-- build:js({app,.tmp}) scripts/main.js -->
+        <script src="scripts/image-model.js"></script>
+        <script src="scripts/thumbnail-view.js"></script>
+        <script src="scripts/detail-view.js"></script>
         <script src="scripts/main.js"></script>
         <!-- endbuild -->
 </body>
