@@ -1,5 +1,8 @@
 'use strict';
 
+////////////////////////////////////////////////////////////
+//////////////////////////////////// DETAIL VIEW CONSTRUCTOR
+////////////////////////////////////////////////////////////
 var DetailView = Parse.View.extend({
 	className: 'detail',
 
@@ -60,6 +63,7 @@ var DetailView = Parse.View.extend({
 
 		$('.loading').show();
 
+		// If the image is unchanged, only the comment will be updated on the server, otherwise the image and comment will be updated.
 		if (objParseFile === 'unchanged') {
 			this.model.set({
 				comment: this.$el.find('.form-comment').val()
@@ -87,7 +91,6 @@ var DetailView = Parse.View.extend({
 			}.bind(this));
 		}
 
-
 		this.remove();
 		this.reset();
 	},
@@ -105,6 +108,13 @@ var DetailView = Parse.View.extend({
 	},
 
 	parseFile: function() {
+		// ------------------------------------------------------------
+		// LOGIC:
+		// 1. If the image-file-selector element has content, the value will be pulled and used as the file.
+		// 2. If the image-file-selector element has no content, but the image-file-name element does have content, the value will be unchanged because an image already exists on the server.
+		// 3. Neither has content, so throw an alert.
+		// ------------------------------------------------------------
+
 		var fileUploadControl = $(".image-file-selector")[0];
 
 		if (fileUploadControl.files.length > 0) {

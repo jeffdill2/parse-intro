@@ -1,5 +1,8 @@
 'use strict';
 
+////////////////////////////////////////////////////////////
+///////////////////////////////// THUMBNAIL VIEW CONSTRUCTOR
+////////////////////////////////////////////////////////////
 var ThumbnailView = Parse.View.extend({
 	className: 'thumbnail',
 
@@ -10,7 +13,9 @@ var ThumbnailView = Parse.View.extend({
 	},
 
 	initialize: function() {
+		// When the model changes, the view will be re-rendered.
 		this.model.on('change', this.render.bind(this));
+		// When the model is destroyed, the view will be removed from the DOM.
 		this.model.on('destroy', this.remove.bind(this));
 
 		$('.image-gallery').prepend(this.el);
