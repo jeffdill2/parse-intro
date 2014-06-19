@@ -29,36 +29,64 @@ var DetailView = Parse.View.extend({
 	},
 
 	upload: function() {
-		var fileUploadControl = $(".image-file-selector")[0];
-		var objParseFile = {};
+		var objParseFile = this.parseFile();
 
-		if (fileUploadControl.files.length > 0) {
-			var objFile = fileUploadControl.files[0];
-			var strFilename = $('.image-file-selector').val().split('\\').pop().split('/').pop();
-
-			objParseFile = new Parse.File(strFilename, objFile);
-			objParseFile.save();
-		} else {
-			alert('You must select a file to upload!');
-			return;
-		}
+		$('.loading').show();
 
 		var image = new Image();
 
 		image.save({
-			image: objParseFile,
-			comment: $('.form-comment').val(),
-			isPlaceholder: false
+			image: 			objParseFile,
+			comment: 		$('.form-comment').val(),
+			isPlaceholder: 	false
 		}, {
 			success: function() {
-				console.log('HUZZAH!');
+				$('.loading').hide();
+
+				new ThumbnailView({model: image});
 			},
 			error: function() {
-				console.log('OOPS!');
+				console.log('There was an issue with saving the image!');
 			}
 		});
 
-		new ThumbnailView({model: image});
+		this.remove();
+		this.reset();
+	},
+
+	update: function() {
+		var objParseFile = this.parseFile();
+		if (!objParseFile) return;
+
+		$('.loading').show();
+
+		if (objParseFile === 'unchanged') {
+			this.model.set({
+				comment: this.$el.find('.form-comment').val()
+			}).save({
+				success: function() {
+					$('.loading').hide();
+				},
+				error: function() {
+					console.log('There was an issue with updating the comment!');
+				}
+			});
+		} else {
+			this.fileUploadPromise.done(function(){
+				this.model.set({
+					image: 		objParseFile,
+					comment: 	this.$el.find('.form-comment').val()
+				}).save({
+					success: function() {
+						$('.loading').hide();
+					},
+					error: function() {
+						console.log('There was an issue with updating the image!');
+					}
+				});
+			}.bind(this));
+		}
+
 
 		this.remove();
 		this.reset();
@@ -76,13 +104,23 @@ var DetailView = Parse.View.extend({
 		objReader.readAsDataURL(objFile);
 	},
 
-	update: function() {
-		this.model.set({
-			comment: 	this.$el.find('.form-comment').val()
-		}).save();
+	parseFile: function() {
+		var fileUploadControl = $(".image-file-selector")[0];
 
-		this.remove();
-		this.reset();
+		if (fileUploadControl.files.length > 0) {
+			var objFile = fileUploadControl.files[0];
+			var strFilename = $('.image-file-selector').val().split('\\').pop().split('/').pop();
+
+			var objParseFile = new Parse.File(strFilename, objFile);
+			this.fileUploadPromise = objParseFile.save();
+
+			return objParseFile;
+		} else if (!($('.image-file-name').val() === '')) {
+			return 'unchanged';
+		} else {
+			alert('You must select a file to upload!');
+			return false;
+		}
 	},
 
 	destroy: function() {

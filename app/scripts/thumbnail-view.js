@@ -10,6 +10,9 @@ var ThumbnailView = Parse.View.extend({
 	},
 
 	initialize: function() {
+		this.model.on('change', this.render.bind(this));
+		this.model.on('destroy', this.remove.bind(this));
+
 		$('.image-gallery').prepend(this.el);
 		this.render();
 	},
