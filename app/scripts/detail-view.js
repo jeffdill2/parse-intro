@@ -9,6 +9,8 @@ var DetailView = Parse.View.extend({
 	detailTemplate: _.template($('.detail-template').text()),
 
 	events: {
+		"click .select-button"	: "select",
+		"click .filter-button"	: "filter",
 		"click .upload-button" 	: "upload",
 		"click .preview-button"	: "preview",
 		"click .update-button"	: "update",
@@ -31,17 +33,52 @@ var DetailView = Parse.View.extend({
 		new DetailView({model: placeholderModel});
 	},
 
+	select: function() {
+		$('.image-file-selector').click();
+	},
+
+	filter: function() {
+		$('.image-filter-overlay').fadeIn('slow');
+		$('.image-filter-options').fadeIn('slow');
+
+		var obj = canvas.getActiveObject();
+		var canvas = new fabric.Canvas('canvas');
+		var filters = fabric.Image.filters
+		fabric.Image.fromURL($('.image-file-name').val(), function() {
+
+		});
+
+		$('grayscale').onclick = function() {
+			applyFilter(0, this.checked && new filters.Grayscale());
+		};
+
+		$('invert').onclick = function() {
+			applyFilter(1, this.checked && new filters.Invert());
+		};
+
+		$('sepia').onclick = function() {
+			applyFilter(3, this.checked && new filters.Sepia());
+		};
+
+		$('sepia2').onclick = function() {
+			applyFilter(4, this.checked && new filters.Sepia2());
+		};
+
+		obj.applyFilters(canvas.renderAll.bind(canvas));
+	},
+
 	upload: function() {
 		var objParseFile = this.parseFile();
+		if (!objParseFile) return;
 
 		$('.loading').show();
 
 		var image = new Image();
 
 		image.save({
-			image: 			objParseFile,
-			comment: 		$('.form-comment').val(),
-			isPlaceholder: 	false
+			image: objParseFile,
+			comment: $('.form-comment').val(),
+			isPlaceholder: false
 		}, {
 			success: function() {
 				$('.loading').hide();
@@ -78,8 +115,8 @@ var DetailView = Parse.View.extend({
 		} else {
 			this.fileUploadPromise.done(function(){
 				this.model.set({
-					image: 		objParseFile,
-					comment: 	this.$el.find('.form-comment').val()
+					image: objParseFile,
+					comment: this.$el.find('.form-comment').val()
 				}).save({
 					success: function() {
 						$('.loading').hide();

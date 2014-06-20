@@ -27,6 +27,7 @@ $(document).on('change', '.image-file-selector', function() {
 	$('.image-file-name').val($('.image-file-selector').val());
 });
 
-$(document).on('click', '.image-file-selector-button', function() {
-	$('.image-file-selector').click();
+$('.radio-button').click(function() {
+	$('.image-filter-options').fadeOut('slow');
+	$('.image-filter-overlay').fadeOut('slow');
 });

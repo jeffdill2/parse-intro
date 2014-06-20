@@ -28,7 +28,31 @@
         <!--////////////////////////////////////////////////////////
         /////////////////////////////////////// BEGIN USER HTML HERE
         /////////////////////////////////////////////////////////-->
+        <div class="image-filter-overlay"></div>
+
         <div class="container">
+            <div class="image-filter-options">
+                <span class="radio-button">
+                    <ul>
+                        <li>
+                            <input type="radio" name="filter-option" value="grayscale">GRAYSCALE</input>
+                        </li>
+
+                        <li>
+                            <input type="radio" name="filter-option" value="invert">INVERT</input>
+                        </li>
+
+                        <li>
+                            <input type="radio" name="filter-option" value="sepia">SEPIA</input>
+                        </li>
+
+                        <li>
+                            <input type="radio" name="filter-option" value="none">NONE</input>
+                        </li>
+                    </ul>
+                </span>
+            </div>
+
             <div class="header">Image Gallery</div>
 
             <div class="image-form"></div>
@@ -46,8 +70,12 @@
             <img src="<%= image._url %>" class="image-detail form-image">
 
             <input type="file" class="image-file-selector">
-            <input type="text" class="image-file-name" placeholder="Image Name..." value="<%= isPlaceholder ? '' : image._url %>"></div>
-            <div class="image-file-selector-button button">Select File</div>
+
+            <input type="text" <%= (image._url.length > 70) ? 'dir="rtl"' : '' %> class="image-file-name" placeholder="Image Name..." value="<%= isPlaceholder ? '' : image._url %>"></div>
+
+            <div class="select-button button">Select File</div>
+            <div class="filter-button button">Apply Filter</div>
+
             <input type="text" class="form-comment" placeholder="Image Comment..." value="<%= isPlaceholder ? '' : comment %>"></input>
 
             <% if (isPlaceholder) { %>
