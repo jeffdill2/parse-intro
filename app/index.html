@@ -16,7 +16,6 @@
         <!-- endbuild -->
         <!-- build:js scripts/vendor/modernizr.js -->
         <script src="../bower_components/modernizr/modernizr.js"></script>
-        <script src="../bower_components/underscore/underscore.js"></script>
         <!-- endbuild -->
 
     </head>
@@ -35,19 +34,19 @@
                 <span class="radio-button">
                     <ul>
                         <li>
-                            <input type="radio" name="filter-option" value="grayscale">GRAYSCALE</input>
+                            <input type="radio" name="filter-type" value="grayscale">GRAYSCALE</input>
                         </li>
 
                         <li>
-                            <input type="radio" name="filter-option" value="invert">INVERT</input>
+                            <input type="radio" name="filter-type" value="invert">INVERT</input>
                         </li>
 
                         <li>
-                            <input type="radio" name="filter-option" value="sepia">SEPIA</input>
+                            <input type="radio" name="filter-type" value="sepia">SEPIA</input>
                         </li>
 
                         <li>
-                            <input type="radio" name="filter-option" value="none">NONE</input>
+                            <input type="radio" name="filter-type" value="none">NONE</input>
                         </li>
                     </ul>
                 </span>
@@ -67,7 +66,7 @@
         </script>
 
         <script type="text/template" class="detail-template">
-            <img src="<%= image._url %>" class="image-detail form-image">
+            <img src="<%= image._url %>" class="image-detail" id="image-detail-id">
 
             <input type="file" class="image-file-selector">
 
@@ -76,15 +75,15 @@
             <div class="select-button button">Select File</div>
             <div class="filter-button button">Apply Filter</div>
 
-            <input type="text" class="form-comment" placeholder="Image Comment..." value="<%= isPlaceholder ? '' : comment %>"></input>
+            <input type="text" class="image-comment" placeholder="Image Comment..." value="<%= isPlaceholder ? '' : comment %>"></input>
 
             <% if (isPlaceholder) { %>
+                <div class="cancel-button button">Cancel</div>
                 <div class="upload-button button">Upload</div>
-                <div class="preview-button button">Preview</div>
             <% } else { %>
-                <div class="update-button button">Update</div>
-                <div class="preview-button button">Preview</div>
+                <div class="cancel-button button">Cancel</div>
                 <div class="delete-button button">Delete</div>
+                <div class="update-button button">Update</div>
             <% } %>
         </script>
 
@@ -95,6 +94,8 @@
         <!-- build:js scripts/vendor.js -->
         <!-- bower:js -->
         <script src="../bower_components/jquery/dist/jquery.js"></script>
+        <script src="../bower_components/underscore/underscore.js"></script>
+        <script src="../bower_components/fabric/dist/fabric.js"></script>
         <!-- endbower -->
         <!-- endbuild -->
 

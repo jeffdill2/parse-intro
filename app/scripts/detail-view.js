@@ -12,7 +12,7 @@ var DetailView = Parse.View.extend({
 		"click .select-button"	: "select",
 		"click .filter-button"	: "filter",
 		"click .upload-button" 	: "upload",
-		"click .preview-button"	: "preview",
+		"click .cancel-button"	: "reset",
 		"click .update-button"	: "update",
 		"click .delete-button"	: "destroy"
 	},
@@ -30,6 +30,7 @@ var DetailView = Parse.View.extend({
 	},
 
 	reset: function() {
+		this.remove();
 		new DetailView({model: placeholderModel});
 	},
 
@@ -41,30 +42,56 @@ var DetailView = Parse.View.extend({
 		$('.image-filter-overlay').fadeIn('slow');
 		$('.image-filter-options').fadeIn('slow');
 
-		var obj = canvas.getActiveObject();
-		var canvas = new fabric.Canvas('canvas');
-		var filters = fabric.Image.filters
-		fabric.Image.fromURL($('.image-file-name').val(), function() {
+		$('.radio-button').click(function() {
+			$('.image-filter-options').fadeOut('slow');
+			$('.image-filter-overlay').fadeOut('slow');
+			$('.image-form').prepend('<canvas id="canvas"></canvas>');
 
+			var objFileReader = new FileReader();
+			var objLocalImage = new Image();
+
+			localImage.src = $('.image-file-selector')[0].files[0].target.result;
+
+
+			objFileReader.onload = function(file) {
+				var objCanvas = new fabric.Canvas('canvas');
+				var objImage = new fabric.Image(file);
+				var objLocalImage = new Image();
+				var strFilterType = $('input:radio[name=filter-type]:checked').val();
+
+
+
+				fabric.Image.fromURL(strFileURL, function(pic) {
+					var objCanvasActive = objCanvas.getActiveObject();
+
+					switch (strFilterType) {
+						case 'grayscale':
+							objCanvas.filters.push(new fabric.Image.filters.Grayscale());
+							break;
+
+						case 'invert':
+							objCanvas.filters.push(new fabric.Image.filters.Invert());
+							break;
+
+						case 'sepia':
+							objCanvas.filters.push(new fabric.Image.filters.Sepia());
+							break;
+
+						case 'none':
+							objCanvas.filters.push([]);
+							break;
+
+						default:
+							break;
+					}
+
+					objCanvasActive.applyFilters(objCanvas.renderAll.bind(objCanvas));
+					objCanvas.add(pic).setActiveObject(pic).renderAll();
+				});
+			};
+
+			objFileReader.readAsDataURL($('#image-detail-id').attr('src'));
 		});
-
-		$('grayscale').onclick = function() {
-			applyFilter(0, this.checked && new filters.Grayscale());
-		};
-
-		$('invert').onclick = function() {
-			applyFilter(1, this.checked && new filters.Invert());
-		};
-
-		$('sepia').onclick = function() {
-			applyFilter(3, this.checked && new filters.Sepia());
-		};
-
-		$('sepia2').onclick = function() {
-			applyFilter(4, this.checked && new filters.Sepia2());
-		};
-
-		obj.applyFilters(canvas.renderAll.bind(canvas));
 	},
 
 	upload: function() {
@@ -77,7 +104,7 @@ var DetailView = Parse.View.extend({
 
 		image.save({
 			image: objParseFile,
-			comment: $('.form-comment').val(),
+			comment: $('.image-comment').val(),
 			isPlaceholder: false
 		}, {
 			success: function() {
@@ -103,7 +130,7 @@ var DetailView = Parse.View.extend({
 		// If the image is unchanged, only the comment will be updated on the server, otherwise the image and comment will be updated.
 		if (objParseFile === 'unchanged') {
 			this.model.set({
-				comment: this.$el.find('.form-comment').val()
+				comment: this.$el.find('.image-comment').val()
 			}).save({
 				success: function() {
 					$('.loading').hide();
@@ -116,7 +143,7 @@ var DetailView = Parse.View.extend({
 			this.fileUploadPromise.done(function(){
 				this.model.set({
 					image: objParseFile,
-					comment: this.$el.find('.form-comment').val()
+					comment: this.$el.find('.image-comment').val()
 				}).save({
 					success: function() {
 						$('.loading').hide();
@@ -130,18 +157,6 @@ var DetailView = Parse.View.extend({
 
 		this.remove();
 		this.reset();
-	},
-
-	preview: function() {
-		var fileUploadControl = $(".image-file-selector")[0];
-		var objFile = fileUploadControl.files[0];
-		var objReader = new FileReader();
-
-		objReader.onload = function(e) {
-			$('.image-detail').attr('src', e.target.result);
-		}
-
-		objReader.readAsDataURL(objFile);
 	},
 
 	parseFile: function() {
@@ -172,7 +187,6 @@ var DetailView = Parse.View.extend({
 
 	destroy: function() {
 		this.model.destroy();
-		this.remove();
 		this.reset();
 	}
 });

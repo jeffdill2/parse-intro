@@ -23,11 +23,18 @@ function loadImages() {
 ////////////////////////////////////////////////////////////
 //////////////////////////////////////////// EVENT FUNCTIONS
 ////////////////////////////////////////////////////////////
-$(document).on('change', '.image-file-selector', function() {
-	$('.image-file-name').val($('.image-file-selector').val());
-});
+$(document).on('change', '.image-file-selector', displayImage);
 
-$('.radio-button').click(function() {
-	$('.image-filter-options').fadeOut('slow');
-	$('.image-filter-overlay').fadeOut('slow');
-});
+function displayImage() {
+	$('.image-file-name').val($('.image-file-selector').val());
+
+	var fileUploadControl = $(".image-file-selector")[0];
+	var objFile = fileUploadControl.files[0];
+	var objReader = new FileReader();
+
+	objReader.onload = function(e) {
+		$('.image-detail').attr('src', e.target.result);
+	}
+
+	objReader.readAsDataURL(objFile);
+}
