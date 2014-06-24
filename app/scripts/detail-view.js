@@ -45,52 +45,53 @@ var DetailView = Parse.View.extend({
 		$('.radio-button').click(function() {
 			$('.image-filter-options').fadeOut('slow');
 			$('.image-filter-overlay').fadeOut('slow');
-			$('.image-form').prepend('<canvas id="canvas"></canvas>');
+
+			$('.image-detail').hide();
+			$('.detail').prepend('<canvas id="canvas" width="' + $('.image-detail').width() + '" height="' + $('.image-detail').height() + '"></canvas>');
 
 			var objFileReader = new FileReader();
-			var objLocalImage = new Image();
-
-			localImage.src = $('.image-file-selector')[0].files[0].target.result;
-
+			var objImageFile = $('.image-file-selector')[0].files[0];
 
 			objFileReader.onload = function(file) {
 				var objCanvas = new fabric.Canvas('canvas');
-				var objImage = new fabric.Image(file);
-				var objLocalImage = new Image();
 				var strFilterType = $('input:radio[name=filter-type]:checked').val();
+				var strFileURL = file.target.result;
 
-
-
-				fabric.Image.fromURL(strFileURL, function(pic) {
-					var objCanvasActive = objCanvas.getActiveObject();
-
+				fabric.Image.fromURL(strFileURL, function(image) {
 					switch (strFilterType) {
 						case 'grayscale':
-							objCanvas.filters.push(new fabric.Image.filters.Grayscale());
+							image.filters.push(new fabric.Image.filters.Grayscale());
 							break;
 
 						case 'invert':
-							objCanvas.filters.push(new fabric.Image.filters.Invert());
+							image.filters.push(new fabric.Image.filters.Invert());
 							break;
 
 						case 'sepia':
-							objCanvas.filters.push(new fabric.Image.filters.Sepia());
+							image.filters.push(new fabric.Image.filters.Sepia());
 							break;
 
 						case 'none':
-							objCanvas.filters.push([]);
+							image.filters.push([]);
 							break;
 
 						default:
 							break;
 					}
 
-					objCanvasActive.applyFilters(objCanvas.renderAll.bind(objCanvas));
-					objCanvas.add(pic).setActiveObject(pic).renderAll();
+					image.setHeight($('.image-detail').height());
+					image.setWidth($('.image-detail').width());
+
+					image.applyFilters(objCanvas.renderAll.bind(objCanvas));
+					objCanvas.add(image).setActiveObject(image).renderAll();
 				});
 			};
 
-			objFileReader.readAsDataURL($('#image-detail-id').attr('src'));
+			if (objImageFile) {
+				objFileReader.readAsDataURL(objImageFile);
+			} else {
+				console.log('NON-LOCAL FILE NOT READY YET!');
+			}
 		});
 	},
 
