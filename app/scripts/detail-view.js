@@ -51,11 +51,12 @@ var DetailView = Parse.View.extend({
 
 			var objFileReader = new FileReader();
 			var objImageFile = $('.image-file-selector')[0].files[0];
+			var strFileURL = "";
 
 			objFileReader.onload = function(file) {
 				var objCanvas = new fabric.Canvas('canvas');
 				var strFilterType = $('input:radio[name=filter-type]:checked').val();
-				var strFileURL = file.target.result;
+				strFileURL = file.target.result;
 
 				fabric.Image.fromURL(strFileURL, function(image) {
 					switch (strFilterType) {
@@ -92,6 +93,9 @@ var DetailView = Parse.View.extend({
 			} else {
 				console.log('NON-LOCAL FILE NOT READY YET!');
 			}
+
+			var objParseFile = new Parse.File('photo.jpg', {base64: strFileURL.replace(/^data:image\/(png|jpg);base64,/, "")});
+			console.log('objParseFile', objParseFile);
 		});
 	},
 
